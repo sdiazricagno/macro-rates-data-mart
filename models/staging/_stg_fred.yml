@@ -1,0 +1,452 @@
+version: 2
+
+models:
+  - name: stg_fred__dgs3mo
+    description: >
+      Typed DGS3MO observations from the committed fredgraph snapshot.
+      Market Yield on U.S. Treasury Securities at 3-Month Constant Maturity, Quoted on an Investment Basis. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DGS3MO"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yield_3m"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__dgs2
+    description: >
+      Typed DGS2 observations from the committed fredgraph snapshot.
+      Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity, Quoted on an Investment Basis. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DGS2"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yield_2y"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__dgs5
+    description: >
+      Typed DGS5 observations from the committed fredgraph snapshot.
+      Market Yield on U.S. Treasury Securities at 5-Year Constant Maturity, Quoted on an Investment Basis. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DGS5"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yield_5y"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__dgs10
+    description: >
+      Typed DGS10 observations from the committed fredgraph snapshot.
+      Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity, Quoted on an Investment Basis. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DGS10"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yield_10y"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__dgs30
+    description: >
+      Typed DGS30 observations from the committed fredgraph snapshot.
+      Market Yield on U.S. Treasury Securities at 30-Year Constant Maturity, Quoted on an Investment Basis. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DGS30"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yield_30y"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__dff
+    description: >
+      Typed DFF observations from the committed fredgraph snapshot.
+      Federal Funds Effective Rate. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["DFF"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["fed_funds_effective"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 30
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["daily"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__cpiaucsl
+    description: >
+      Typed CPIAUCSL observations from the committed fredgraph snapshot.
+      Consumer Price Index for All Urban Consumers: All Items in U.S. City Average. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["CPIAUCSL"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["cpi_index"]
+      - name: measure_value
+        description: Observation in index. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 5
+                max_value: 500
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["index"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["monthly"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__unrate
+    description: >
+      Typed UNRATE observations from the committed fredgraph snapshot.
+      Unemployment Rate. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["UNRATE"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["unemployment_rate"]
+      - name: measure_value
+        description: Observation in percent. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 30
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["percent"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["monthly"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null
+
+  - name: stg_fred__nfci
+    description: >
+      Typed NFCI observations from the committed fredgraph snapshot.
+      Chicago Fed National Financial Conditions Index. measure_value is null on a missing print.
+    columns:
+      - name: observation_date
+        description: Date published by FRED for this observation.
+        data_tests:
+          - not_null
+          - unique
+      - name: series_id
+        description: FRED series id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["NFCI"]
+      - name: measure_name
+        description: Column name used downstream.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["nfci"]
+      - name: measure_value
+        description: Observation in index. Null when FRED has no print.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 15
+      - name: unit
+        description: Unit of measure_value.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["index"]
+      - name: frequency
+        description: Native publication frequency.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["weekly"]
+      - name: seasonal_adjustment
+        description: FRED seasonal-adjustment status.
+        data_tests:
+          - not_null

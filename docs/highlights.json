@@ -1,0 +1,106 @@
+{
+  "snapshot_date": "2026-11-27",
+  "retrieved_at": "2026-11-27T13:41:49Z",
+  "panel": {
+    "panel_start": "1962-01-02",
+    "panel_end": "2026-11-24",
+    "business_days": 16209
+  },
+  "latest_curve": {
+    "curve_date": "2026-11-24",
+    "yield_3m": 4.36,
+    "yield_2y": 4.63,
+    "yield_5y": 4.69,
+    "yield_10y": 4.91,
+    "yield_30y": 5.3,
+    "fed_funds_effective": 3.88,
+    "spread_2s10s": 0.28,
+    "spread_3m10y": 0.55,
+    "is_inverted_2s10s": false,
+    "is_inverted_3m10y": false,
+    "cpi_yoy_pct": null,
+    "real_yield_2y": null,
+    "real_yield_10y": null,
+    "real_fed_funds": null,
+    "nfci": -0.444,
+    "nfci_above_zero": false,
+    "stress_regime": false,
+    "unemployment_rate": 4.1
+  },
+  "fill": {
+    "yield_10y_carried_days": 0,
+    "yield_30y_null_days_after_first_print": 0
+  },
+  "inversions": {
+    "2s10s": {
+      "episode_count": 44,
+      "open_count": 0,
+      "shortest_business_days": 1,
+      "longest_business_days": 537,
+      "median_business_days": 3.5,
+      "longest": {
+        "episode_id": "2s10s_2022-07-06",
+        "start_date": "2022-07-06",
+        "end_date": "2024-08-26",
+        "length_business_days": 537,
+        "length_calendar_days": 783,
+        "depth_bps": 108.0,
+        "trough_spread_pp": -1.08,
+        "trough_date": "2023-07-03",
+        "is_open": false
+      }
+    },
+    "3m10y": {
+      "episode_count": 55,
+      "open_count": 0,
+      "shortest_business_days": 1,
+      "longest_business_days": 534,
+      "median_business_days": 3.0,
+      "longest": {
+        "episode_id": "3m10y_2022-10-25",
+        "start_date": "2022-10-25",
+        "end_date": "2024-12-12",
+        "length_business_days": 534,
+        "length_calendar_days": 780,
+        "depth_bps": 189.0,
+        "trough_spread_pp": -1.89,
+        "trough_date": "2023-06-01",
+        "is_open": false
+      }
+    }
+  },
+  "stress": {
+    "business_days": 16209,
+    "stress_days": 1042,
+    "not_stress_days": 11575,
+    "unknown_days": 3592,
+    "stress_episode_count": 21
+  },
+  "dbt_tests": {
+    "pass": 201,
+    "warn": 1,
+    "fail": 0,
+    "error": 0,
+    "by_category": {
+      "not null": {
+        "pass": 76
+      },
+      "unique": {
+        "pass": 20
+      },
+      "accepted range": {
+        "pass": 55
+      },
+      "accepted values": {
+        "pass": 38
+      },
+      "singular": {
+        "pass": 10
+      },
+      "z-score": {
+        "pass": 2,
+        "warn": 1
+      }
+    }
+  }
+}

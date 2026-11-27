@@ -1,0 +1,8 @@
+macro_rates:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: data/macro_rates.duckdb
+      schema: main
+      threads: 4
