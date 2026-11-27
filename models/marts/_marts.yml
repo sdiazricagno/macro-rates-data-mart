@@ -1,0 +1,410 @@
+version: 2
+
+models:
+  - name: fct_yield_curve_daily
+    description: >
+      One row per bond-market business day from the first 10-year print in the
+      snapshot through the latest daily observation. Treasury yields and the
+      effective fed funds rate are percent per annum. days_carried is zero on
+      a published print and positive when the value was carried forward.
+      Null means the tenor was not yet published or the gap exceeded five
+      business days. The 30-year gap from early 2002 to early 2006 stays null.
+    columns:
+      - name: curve_date
+        description: Bond-market business day.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+      - name: yield_3m
+        description: 3-month Treasury constant-maturity yield, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_2y
+        description: 2-year Treasury constant-maturity yield, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_5y
+        description: 5-year Treasury constant-maturity yield, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_10y
+        description: 10-year Treasury constant-maturity yield, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_30y
+        description: 30-year Treasury constant-maturity yield, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: fed_funds_effective
+        description: Effective federal funds rate, percent.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 30
+      - name: yield_3m_days_carried
+        description: Business days since the 3-month print. Null when yield_3m is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_2y_days_carried
+        description: Business days since the 2-year print. Null when yield_2y is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_5y_days_carried
+        description: Business days since the 5-year print. Null when yield_5y is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_10y_days_carried
+        description: Business days since the 10-year print. Null when yield_10y is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_30y_days_carried
+        description: Business days since the 30-year print. Null when yield_30y is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: fed_funds_days_carried
+        description: Business days since the fed funds print. Null when the rate is null.
+        data_type: integer
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+
+  - name: fct_curve_spreads
+    description: >
+      Curve spreads in percentage points. spread_2s10s is the 10-year yield
+      minus the 2-year yield. spread_3m10y is the 10-year yield minus the
+      3-month yield. A spread is inverted only when it is strictly negative.
+      A missing leg leaves the spread and the flag null.
+    columns:
+      - name: curve_date
+        description: Bond-market business day.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+      - name: yield_3m
+        description: 3-month yield copied from the curve fact, percent.
+        data_type: double
+      - name: yield_2y
+        description: 2-year yield copied from the curve fact, percent.
+        data_type: double
+      - name: yield_10y
+        description: 10-year yield copied from the curve fact, percent.
+        data_type: double
+      - name: spread_2s10s
+        description: 10-year yield minus 2-year yield, percentage points.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 10
+          - zscore_anomaly:
+              arguments:
+                order_by: curve_date
+                threshold: 8
+                window: 252
+              config:
+                severity: warn
+      - name: spread_3m10y
+        description: 10-year yield minus 3-month yield, percentage points.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 10
+          - zscore_anomaly:
+              arguments:
+                order_by: curve_date
+                threshold: 8
+                window: 252
+              config:
+                severity: warn
+      - name: is_inverted_2s10s
+        description: True when spread_2s10s is negative.
+        data_type: boolean
+      - name: is_inverted_3m10y
+        description: True when spread_3m10y is negative.
+        data_type: boolean
+
+  - name: dim_inversion_episodes
+    description: >
+      One row per uninterrupted run of negative spreads. length_business_days
+      counts business days in the run. depth_bps is how far below zero the
+      spread fell, in basis points. is_open is true when the episode is still
+      underway on the last print in the snapshot.
+    columns:
+      - name: episode_id
+        description: Spread code plus the episode start date.
+        data_type: varchar
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+      - name: spread_code
+        description: Either 2s10s or 3m10y.
+        data_type: varchar
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["2s10s", "3m10y"]
+      - name: start_date
+        description: First business day of the inversion.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      - name: end_date
+        description: Last inverted business day observed in the episode.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      - name: length_business_days
+        description: Count of business days from start_date through end_date.
+        data_type: integer
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 2000
+      - name: length_calendar_days
+        description: Calendar days from start_date through end_date, inclusive.
+        data_type: integer
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 3000
+      - name: trough_spread_pp
+        description: Most negative spread during the episode, percentage points.
+        data_type: double
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 0
+      - name: depth_bps
+        description: Positive depth, equal to -100 times trough_spread_pp.
+        data_type: double
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 500
+      - name: trough_date
+        description: Earliest business day on which the trough spread printed.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      - name: is_open
+        description: True when end_date is the latest non-null print of this spread.
+        data_type: boolean
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+
+  - name: fct_real_rates
+    description: >
+      Nominal Treasury and fed funds yields minus year-over-year CPI, both in
+      percent. This is a Fisher approximation, not a TIPS yield and not a
+      survey of expected inflation. CPI is the monthly index stepped onto
+      business days; it is not a point-in-time vintage.
+    columns:
+      - name: curve_date
+        description: Bond-market business day.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+      - name: yield_2y
+        description: Nominal 2-year yield, percent.
+        data_type: double
+      - name: yield_10y
+        description: Nominal 10-year yield, percent.
+        data_type: double
+      - name: fed_funds_effective
+        description: Nominal effective fed funds rate, percent.
+        data_type: double
+      - name: cpi_index
+        description: CPI-U index level carried from the latest month start.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 5
+                max_value: 500
+      - name: cpi_yoy_pct
+        description: Year-over-year percent change in the CPI-U index.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 20
+      - name: cpi_asof_date
+        description: Month-start date of the CPI print in use.
+        data_type: date
+      - name: real_yield_2y
+        description: yield_2y minus cpi_yoy_pct.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -20
+                max_value: 25
+      - name: real_yield_10y
+        description: yield_10y minus cpi_yoy_pct.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -20
+                max_value: 25
+      - name: real_fed_funds
+        description: fed_funds_effective minus cpi_yoy_pct.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -20
+                max_value: 25
+
+  - name: fct_stress_regime
+    description: >
+      A business day is in stress when the 2s10s spread is negative and NFCI
+      is strictly above zero. The rule code on every row is
+      2s10s_negative_and_nfci_positive. Unemployment is context from the
+      monthly labor series and is not part of the rule. If either input is
+      null, stress_regime is null.
+    columns:
+      - name: curve_date
+        description: Bond-market business day.
+        data_type: date
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - unique
+      - name: spread_2s10s
+        description: 10-year yield minus 2-year yield, percentage points.
+        data_type: double
+      - name: is_inverted_2s10s
+        description: True when spread_2s10s is negative.
+        data_type: boolean
+      - name: nfci
+        description: Chicago Fed NFCI. Positive values are tighter than average.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 15
+          - zscore_anomaly:
+              arguments:
+                order_by: curve_date
+                threshold: 8
+                window: 252
+              config:
+                severity: warn
+      - name: nfci_asof_date
+        description: Publication date of the NFCI value on this business day.
+        data_type: date
+      - name: nfci_above_zero
+        description: True when NFCI is strictly above zero.
+        data_type: boolean
+      - name: stress_regime
+        description: True only when 2s10s is negative and NFCI is above zero.
+        data_type: boolean
+      - name: rule_code
+        description: Identifier of the stress rule, repeated on every row.
+        data_type: varchar
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["2s10s_negative_and_nfci_positive"]
+      - name: unemployment_rate
+        description: >
+          Seasonally adjusted unemployment rate, percent, stepped forward from
+          the monthly print. Not an input to stress_regime.
+        data_type: double
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 30

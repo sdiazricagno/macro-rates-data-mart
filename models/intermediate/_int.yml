@@ -1,0 +1,194 @@
+version: 2
+
+models:
+  - name: int_business_calendar
+    description: >
+      Bond-market business days from the first non-null 10-year yield through
+      the latest daily observation in the snapshot. Weekends and the close
+      list in the reference seeds are excluded.
+    columns:
+      - name: calendar_date
+        description: Business day included in the daily spine.
+        data_tests:
+          - not_null
+          - unique
+
+  - name: int_yields_daily
+    description: >
+      Daily Treasury yields and the effective fed funds rate aligned to the
+      business calendar. The last non-null print is carried forward at most
+      five business days. There is no backfill.
+    columns:
+      - name: curve_date
+        data_tests:
+          - not_null
+          - unique
+      - name: yield_3m
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_2y
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_5y
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_10y
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: yield_30y
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 25
+      - name: fed_funds_effective
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -1
+                max_value: 30
+      - name: yield_3m_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_2y_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_5y_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_10y_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: yield_30y_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+      - name: fed_funds_effective_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5
+
+  - name: int_cpi_monthly
+    description: >
+      Monthly CPI index and a year-over-year percent change. The base is the
+      index on the same month one year earlier. A missing base month leaves
+      the change null.
+    columns:
+      - name: observation_date
+        data_tests:
+          - not_null
+          - unique
+      - name: cpi_index
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 5
+                max_value: 500
+      - name: cpi_yoy_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 20
+
+  - name: int_cpi_daily
+    description: >
+      Monthly CPI stepped onto business days. The month-start print is carried
+      forward at most 45 business days. Year-over-year CPI is taken from that
+      same month, so it does not change inside the month.
+    columns:
+      - name: calendar_date
+        data_tests:
+          - not_null
+          - unique
+      - name: cpi_index
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 5
+                max_value: 500
+      - name: cpi_yoy_pct
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 20
+      - name: cpi_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 45
+
+  - name: int_unrate_daily
+    description: >
+      Monthly unemployment rate stepped onto business days, carried at most
+      45 business days. No backfill.
+    columns:
+      - name: calendar_date
+        data_tests:
+          - not_null
+          - unique
+      - name: unemployment_rate
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 30
+      - name: unemployment_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 45
+
+  - name: int_nfci_daily
+    description: >
+      Weekly NFCI stepped onto business days, carried at most 10 business days.
+      Positive values mean tighter-than-average financial conditions.
+    columns:
+      - name: calendar_date
+        data_tests:
+          - not_null
+          - unique
+      - name: nfci
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -5
+                max_value: 15
+      - name: nfci_days_carried
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 10

@@ -1,0 +1,76 @@
+version: 2
+
+sources:
+  - name: fred
+    description: >
+      Public FRED series frozen under data/raw. Files were downloaded from the
+      fredgraph CSV endpoint with no API key. CI builds this snapshot offline.
+    schema: raw
+    loader: fredgraph_csv
+    loaded_at_field: loaded_at
+    freshness:
+      warn_after: {count: 7, period: day}
+      error_after: {count: 14, period: day}
+    tables:
+      - name: dgs3mo
+        description: >
+          Market Yield on U.S. Treasury Securities at 3-Month Constant Maturity, Quoted on an Investment Basis. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dgs3mo.csv'))"
+
+      - name: dgs2
+        description: >
+          Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity, Quoted on an Investment Basis. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dgs2.csv'))"
+
+      - name: dgs5
+        description: >
+          Market Yield on U.S. Treasury Securities at 5-Year Constant Maturity, Quoted on an Investment Basis. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dgs5.csv'))"
+
+      - name: dgs10
+        description: >
+          Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity, Quoted on an Investment Basis. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dgs10.csv'))"
+
+      - name: dgs30
+        description: >
+          Market Yield on U.S. Treasury Securities at 30-Year Constant Maturity, Quoted on an Investment Basis. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dgs30.csv'))"
+
+      - name: dff
+        description: >
+          Federal Funds Effective Rate. daily, percent, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/dff.csv'))"
+
+      - name: cpiaucsl
+        description: >
+          Consumer Price Index for All Urban Consumers: All Items in U.S. City Average. monthly, index, seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/cpiaucsl.csv'))"
+        freshness:
+          warn_after: {count: 50, period: day}
+          error_after: {count: 80, period: day}
+
+      - name: unrate
+        description: >
+          Unemployment Rate. monthly, percent, seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/unrate.csv'))"
+        freshness:
+          warn_after: {count: 50, period: day}
+          error_after: {count: 80, period: day}
+
+      - name: nfci
+        description: >
+          Chicago Fed National Financial Conditions Index. weekly, index, not seasonally adjusted.
+        meta:
+          external_location: "(select cast(observation_date as timestamp) as loaded_at, observation_date, value from read_csv_auto('data/raw/{{ var('snapshot_date') }}/nfci.csv'))"
+        freshness:
+          warn_after: {count: 14, period: day}
+          error_after: {count: 28, period: day}

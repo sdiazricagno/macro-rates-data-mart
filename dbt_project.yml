@@ -1,0 +1,53 @@
+name: macro_rates
+version: "1.0.0"
+config-version: 2
+profile: macro_rates
+require-dbt-version: [">=1.11.0", "<1.12.0"]
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages", "logs"]
+
+vars:
+  snapshot_date: "2026-11-27"
+  # Carry the last print forward at most this many business days.
+  # Daily: a long weekend plus a one-day hole. Not the 2002-2006 30-year gap.
+  # Weekly: two NFCI publication weeks.
+  # Monthly: the next release window. A print stays on the spine for 45
+  # business days, which covers the following month before the next index
+  # is in the file, and drops a hole of about two missed releases.
+  max_fill_daily_business_days: 5
+  max_fill_weekly_business_days: 10
+  max_fill_monthly_business_days: 45
+
+models:
+  macro_rates:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+      +contract:
+        enforced: true
+      +persist_docs:
+        relation: true
+        columns: true
+
+seeds:
+  macro_rates:
+    +schema: reference
+    us_market_holidays:
+      +column_types:
+        holiday_date: date
+        holiday_name: varchar
+    us_market_extra_closures:
+      +column_types:
+        closure_date: date
+        reason: varchar
